@@ -1,0 +1,84 @@
+# Route Level Analysis README
+
+This document summarizes the key steps and findings of the `Route_level_analysis.ipynb` notebook.
+
+## Objective
+
+The primary goal of this analysis is to understand how weather conditions influence bike trip counts to strategic locations, defined as the most common end stations with high capacity.
+
+## Data Sources
+
+-   `cleaned_weather_data.csv`: Contains cleaned weather data.
+-   `trip.csv`: Contains trip data.
+-   `unique_station_data.csv`: Contains unique station metadata.
+
+## Key Steps
+
+1.  **Data Loading and Preparation:**
+    -   Load weather and trip data using pandas.
+    -   Convert `start_time` and `time` columns to datetime objects.
+    -   Merge trip data with weather data based on the `start_time` and `time` columns.
+    -   Create a `date` column from the `start_time`.
+
+2.  **Filtering Round-Trip Rides:**
+    -   Exclude trips where the start and end locations are identical to focus on meaningful routes.
+
+3.  **Identifying Common End Stations:**
+    -   Count trips per `end_location` to identify the most popular destinations.
+    -   Select the top 10 most common end stations.
+
+4.  **Combining with Station Metadata:**
+    -   Load station data including `num_of_rack` (capacity) and geographic coordinates.
+    -   Merge trip data with station metadata to enrich the analysis with station characteristics.
+
+5.  **Identifying Strategic Stations:**
+    -   Define strategic stations as those with a `num_of_rack` value above the 75th percentile.
+    -   Create a DataFrame containing only strategic and common stations.
+
+6.  **Time of Day Segmentation:**
+    -   Define a function `time_of_day` to categorize trip start times into segments such as "Morning Rush Hour", "Afternoon Rush Hour", "Night", etc.
+    -   Apply this function to the `start_time` column to create a `time_of_day` column.
+
+7.  **Weekend Identification:**
+    -   Create a `weekend` column to flag trips occurring on weekends (Saturday and Sunday).
+
+8.  **Data Aggregation:**
+    -   Aggregate trip data by `place_id`, `place_name`, `date`, and `time_of_day` to calculate:
+        -   Average, maximum, and minimum temperatures.
+        -   Average humidity, wind speed, pressure, and visibility.
+        -   Sum of rain, snow, thunder, and fog occurrences.
+        -   Total trip counts.
+        -   Predominant temperature bin.
+
+9.  **Exploratory Data Analysis:**
+    -   Calculate and visualize correlations between numeric columns using a heatmap.
+    -   Examine the distribution of `trip_count` using a histogram.
+
+10. **Negative Binomial Regression:**
+    -   Create a lagged trip count variable (`trip_count_lag1`).
+    -   Fit a Negative Binomial regression model to predict `trip_count` based on weather predictors, time of day, month, weekend, and place ID.
+    -   Interpret the coefficients to determine the impact of each variable on trip counts.
+
+11. **Residual Analysis:**
+    -   Check for residual autocorrelation to validate the model assumptions.
+
+## Key Findings
+
+-   **Temperature Sensitivity:**
+    -   Maximum temperature has a strong positive effect on trip counts.
+    -   Minimum temperature has a strong negative effect on trip counts.
+-   **Minimal Sensitivity:**
+    -   Humidity and wind speed have minimal impact on trip counts.
+-   **Pressure Change:**
+    -   Pressure change has a positive effect on trip counts.
+-   **Bad Weather:**
+    -   Bad weather (rain or fog) has a small positive effect on trip counts.
+-   **Model Evaluation:**
+    -   The deviance analysis suggests a good model fit.
+    -   Residual autocorrelation analysis indicates that the residual independence assumption holds.
+
+
+## Files Created
+
+-   `root_level.csv`: Contains the merged trip and weather data.
+-   `top_stations.csv`: Contains the aggregated trip data for top stations.

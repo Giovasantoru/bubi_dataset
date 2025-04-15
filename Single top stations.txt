@@ -1,0 +1,55 @@
+# Single Top Stations Analysis
+
+This README summarizes the main operations and findings from the `Single top stations analysis.ipynb` notebook.
+
+## Objective
+
+To analyze the weather sensitivity of trip counts at Budapest’s top five strategic end stations, using station-level Negative Binomial regression models.
+
+## Data Source
+
+- `top_stations.csv`: Aggregated trip and weather data for the most common and high-capacity end stations, generated from previous route-level analysis.
+
+## Key Steps
+
+1. **Data Loading**
+   - Load the aggregated data for top stations using pandas.
+
+2. **Station Selection**
+   - Identify unique `place_id` values representing the top five end stations:
+     - 517: Városháza Park
+     - 611: Nyugati tér
+     - 808: Keleti pályaudvar
+     - 905: (Unnamed in code, but included in analysis)
+     - 1302: Szent István park
+
+3. **Modeling Approach**
+   - For each station, subset the data and fit a Negative Binomial regression model:
+     - Predictors: max_temp, min_temp, avg_humidity, avg_windspeed, pressure_change, avg_pressure, avg_visibility, bad_weather_half_hours, trip_count_lag1, time_of_day, month, weekend.
+     - The formula controls for time-of-day, month, and weekend effects.
+
+4. **Result Extraction**
+   - Store and print the regression summary for each station.
+   - Interpret the significance and direction of weather and temporal predictors for each location.
+
+5. **Interpretation and Insights**
+   - **Nyugati tér (611):** Trip counts are robust to weather; time-of-day is the main driver.
+   - **Városháza Park (517):** No significant weather or time-of-day effects; usage is stable.
+   - **Keleti pályaudvar (808):** February shows a significant drop in usage; otherwise, weather effects are minimal.
+   - **Szent István park (1302):** Only temperature extremes show significance; otherwise, stable usage.
+   - **905:** Similar patterns to other top stations.
+
+6. **General Conclusion**
+   - Across all top stations, only temperature extremes and large daily pressure changes show any significant effect on trip counts.
+   - Most weather variables (humidity, wind, minor bad weather) do not significantly impact usage at these strategic locations.
+   - These stations are resilient to typical weather fluctuations, likely due to their central location and commuter-driven demand.
+
+## Files Created
+
+- No new files are created by this notebook; all analysis is performed in-memory using `top_stations.csv`.
+
+## Usage
+
+This notebook is intended for exploratory and statistical analysis of weather sensitivity at the most important bike-sharing end stations in Budapest. It provides evidence for the resilience of strategic stations to daily weather changes, supporting operational and planning decisions.
+
+---
